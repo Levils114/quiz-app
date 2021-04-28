@@ -1,62 +1,57 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:quiz_project/widgets/answer_widget.dart';
+import 'package:quiz_project/widgets/question_widget.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(QuizzApp());
 }
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return (MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomePage(),
-      theme: ThemeData(primarySwatch: Colors.blue),
-    ));
-  }
-}
-
-class HomePage extends StatefulWidget {
+class QuizzApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return (HomePageState());
+    return (_QuizzAppState());
   }
 }
 
-class HomePageState extends State {
-  int _counter = 0;
+class _QuizzAppState extends State<QuizzApp> {
+  var _questionSelected = 0;
 
-  handleAddCounter() {
+  final List<String> questions = [
+    'Qual é a sua cor preferida?',
+    'Qual é o seu animal preferido?'
+  ];
+
+  void _response() {
     setState(() {
-      _counter = _counter + 1;
+      if (questions.length - 1 > _questionSelected) {
+        _questionSelected++;
+      } else if (questions.length - 1 == _questionSelected) {
+        _questionSelected = _questionSelected - 1;
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return (Scaffold(
-      appBar: AppBar(
-        title: Text('Flutter Demo Home Page'),
-        centerTitle: true,
-      ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Center(
-            child: Column(
-              children: [
-                Text('You have pushed the button this many times:'),
-                Text(_counter.toString()),
-              ],
+    return (MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Questions'),
+          centerTitle: true,
+        ),
+        body: Column(
+          children: [
+            QuestionWidget(
+              title: questions[_questionSelected],
             ),
-          ),
-          FloatingActionButton(
-              onPressed: () => handleAddCounter(),
-              child: Icon(
-                Icons.add,
-                color: Colors.white,
-              ))
-        ]),
+            AnswerWidget(answerText: 'Resposta 1'),
+            AnswerWidget(answerText: 'Resposta 2'),
+            AnswerWidget(answerText: 'Resposta 3'),
+          ],
+        ),
       ),
     ));
   }
