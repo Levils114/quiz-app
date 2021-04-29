@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz_project/widgets/answer_widget.dart';
 import 'package:quiz_project/widgets/question_widget.dart';
+import 'package:quiz_project/widgets/quiz_widget.dart';
+import 'package:quiz_project/widgets/result_widget.dart';
 
 void main() {
   runApp(QuizzApp());
@@ -17,23 +19,40 @@ class QuizzApp extends StatefulWidget {
 class _QuizzAppState extends State<QuizzApp> {
   var _questionSelected = 0;
 
-  final List<String> questions = [
-    'Qual é a sua cor preferida?',
-    'Qual é o seu animal preferido?'
+  final _questions = const [
+    {
+      'question': 'Qual sua cor favorita?',
+      'answers': ['Black', 'White', 'Grey', 'Blue'],
+    },
+    {
+      'question': 'Qual seu animal favorito?',
+      'answers': ['Dog', 'Cat', 'Horse', 'Duck']
+    }
   ];
 
   void _response() {
-    setState(() {
-      if (questions.length - 1 > _questionSelected) {
+    if (hasSelectedAnswer) {
+      setState(() {
         _questionSelected++;
-      } else if (questions.length - 1 == _questionSelected) {
-        _questionSelected = _questionSelected - 1;
-      }
-    });
+      });
+    }
+  }
+
+  bool get hasSelectedAnswer {
+    return _questionSelected < _questions.length;
   }
 
   @override
   Widget build(BuildContext context) {
+    List<String> answers =
+        hasSelectedAnswer ? _questions[_questionSelected]['answers'] : [];
+    List<Widget> answersWidgets = answers
+        .map((answer) => AnswerWidget(
+              answerText: answer,
+              onSelect: _response,
+            ))
+        .toList();
+
     return (MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
@@ -42,16 +61,12 @@ class _QuizzAppState extends State<QuizzApp> {
           title: Text('Questions'),
           centerTitle: true,
         ),
-        body: Column(
-          children: [
-            QuestionWidget(
-              title: questions[_questionSelected],
-            ),
-            AnswerWidget(answerText: 'Resposta 1'),
-            AnswerWidget(answerText: 'Resposta 2'),
-            AnswerWidget(answerText: 'Resposta 3'),
-          ],
-        ),
+        body: hasSelectedAnswer
+            ? QuizWidget(
+                titleText: _questions[_questionSelected]['question'],
+                answerWidgets: answersWidgets,
+              )
+            : ResultWidget(),
       ),
     ));
   }
