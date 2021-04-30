@@ -5,7 +5,10 @@ class QuizWidget extends StatelessWidget {
   final String titleText;
   final List<Widget> answerWidgets;
 
-  QuizWidget({this.titleText, this.answerWidgets});
+  QuizWidget({
+    @required this.titleText,
+    @required this.answerWidgets,
+  });
 
   @override
   Widget build(BuildContext context) {

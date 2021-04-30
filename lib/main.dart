@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz_project/widgets/answer_widget.dart';
-import 'package:quiz_project/widgets/question_widget.dart';
 import 'package:quiz_project/widgets/quiz_widget.dart';
 import 'package:quiz_project/widgets/result_widget.dart';
 
@@ -18,24 +17,45 @@ class QuizzApp extends StatefulWidget {
 
 class _QuizzAppState extends State<QuizzApp> {
   var _questionSelected = 0;
+  var _score = 0;
 
   final _questions = const [
     {
       'question': 'Qual sua cor favorita?',
-      'answers': ['Black', 'White', 'Grey', 'Blue'],
+      'answers': [
+        {'score': 5, 'text': 'Black'},
+        {'score': 10, 'text': 'White'},
+        {'score': 2, 'text': 'Grey'},
+        {'score': 8, 'text': 'Blue'},
+      ],
     },
     {
       'question': 'Qual seu animal favorito?',
-      'answers': ['Dog', 'Cat', 'Horse', 'Duck']
+      'answers': [
+        {'score': 10, 'text': 'Dog'},
+        {'score': 2, 'text': 'Cat'},
+        {'score': 3, 'text': 'Horse'},
+        {'score': 5, 'text': 'Duck'},
+      ]
     }
   ];
 
-  void _response() {
+  void _response(int scoreToAdd) {
     if (hasSelectedAnswer) {
       setState(() {
         _questionSelected++;
+        _score += scoreToAdd;
       });
     }
+  }
+
+  void _restart(String justToSeeInderectComunication) {
+    setState(() {
+      _questionSelected = 0;
+      _score = 0;
+
+      print(justToSeeInderectComunication);
+    });
   }
 
   bool get hasSelectedAnswer {
@@ -44,12 +64,12 @@ class _QuizzAppState extends State<QuizzApp> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> answers =
+    List<Map<String, Object>> answers =
         hasSelectedAnswer ? _questions[_questionSelected]['answers'] : [];
     List<Widget> answersWidgets = answers
         .map((answer) => AnswerWidget(
-              answerText: answer,
-              onSelect: _response,
+              answerText: answer['text'],
+              onSelect: () => _response(answer['score']),
             ))
         .toList();
 
@@ -66,7 +86,10 @@ class _QuizzAppState extends State<QuizzApp> {
                 titleText: _questions[_questionSelected]['question'],
                 answerWidgets: answersWidgets,
               )
-            : ResultWidget(),
+            : ResultWidget(
+                score: _score,
+                restartFunction: _restart,
+              ),
       ),
     ));
   }
